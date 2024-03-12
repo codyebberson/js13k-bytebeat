@@ -1,0 +1,35 @@
+.group {
+  font-weight: bold;
+}
+
+.entry {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.details {
+  font-size: 10pt;
+}
+
+a {
+  color: #00f;
+}
+
+a:hover {
+  color: #f80;
+}
+
+pre {
+  border: 1px solid #ccc;
+  padding: 4px;
+}
+
+pre a {
+  text-decoration: none;
+
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  user-select: text;
+  cursor: pointer;
+}

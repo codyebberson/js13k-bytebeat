@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>JS13k Bytebeats</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>JS13k Bytebeats</h1>
+    <p>Tiny beatbyte player for <a href="https://js13kgames.com/">js13k</a></p>
+    <h2>Instructions</h2>
+    <p>Click a song to play. Click again to stop.</p>
+    <h2>What is a "bytebeat"?</h2>
+    <blockquote>
+      Bytebeat music (or one-liner music) is a piece of rhythmic and somewhat
+      melodic music with no score, no instruments, and no real oscillators. It's
+      simply a single-line formula that defines a waveform as a function of
+      time, processed (usually) 8000 times per second, resulting in an audible
+      waveform with a 256-step resolution from silence (0) to full amplitude
+      (256). If you put that formula into a program with a loop that increments
+      time variable (t), you can generate the headerless unsigned 8 bit mono
+      8kHz audio stream on output, like in this application. Since these
+      directly output a waveform, they have great performance in compiled
+      languages and can often be ran on even the weakest embedded devices.
+    </blockquote>
+    <h2>Example code</h2>
+    <pre>
+// Setup code
+const audioCtx = new AudioContext();
+const masterVolume = 0.5;
+let scriptProcessor = null;
+
+// Player
+function playBytebeat(f, sampleRate, mapFunc) {
+  let t = 0;
+
+  scriptProcessor = audioCtx.createScriptProcessor(4096, 1, 1);
+  scriptProcessor.onaudioprocess = (e) => {
+    const buf = e.outputBuffer.getChannelData(0);
+    for (let i = 0; i < buf.length; i++) {
+      buf[i] = masterVolume * mapFunc(f(int(t)));
+      t += sampleRate / audioCtx.sampleRate;
+    }
+  };
+
+  scriptProcessor.connect(audioCtx.destination);
+}
+
+// Example
+playBytebeat((t) => t*(1+'4451'[t>>13&3]/10)&t>>9+(.003*t&3), 11025, unsignedByteToFloat);
+</pre
+    >
+    <h2>Full source code</h2>
+    <ul>
+      <li><a href="./songs.js">songs.js</a> - all song data</li>
+      <li><a href="./player.js">player.js</a> - audio player</li>
+      <li><a href="./main.js">main.js</a> - HTML setup code</li>
+    </ul>
+    <h2>Acknowledgements</h2>
+    <ul>
+      <li>
+        This website is derived from
+        <a href="https://dollchan.net/bytebeat/">Bytebeat</a>
+        (<a href="https://github.com/SthephanShinkufag/bytebeat-composer"
+          >source</a
+        >) by
+        <a href="https://github.com/SthephanShinkufag">SthephanShi</a>
+      </li>
+      <li>
+        That website is the fork of
+        <a href="http://entropedia.co.uk/generative_music/"
+          >8-bit Generative Composer</a
+        >
+        by <a href="http://twitter.com/paul_hayes/">@paul_hayes</a>
+      </li>
+    </ul>
+    <h2>Songs</h2>
+    <div id="container"></div>
+  </body>
+  <script src="./songs.js"></script>
+  <script src="./player.js"></script>
+  <script src="./main.js"></script>
+</html>
